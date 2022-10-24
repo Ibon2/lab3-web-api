@@ -2,7 +2,6 @@ package es.unizar.webeng.lab3
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.*
-import net.bytebuddy.matcher.ElementMatchers.any
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -45,9 +44,9 @@ class ControllerTests {
     @MockkBean
     private lateinit var employeeRepository: EmployeeRepository
 
-    private var TOM = "Tom"
-    private var MARY = "Mary"
-    private var MANAGER = "Manager"
+    private var tom = "Tom"
+    private var mary = "Mary"
+    private var manager = "Manager"
 
     @Test
     fun `POST is not safe and not idempotent`() {
@@ -64,27 +63,27 @@ class ControllerTests {
 
         mvc.post("/employees") {
             contentType = MediaType.APPLICATION_JSON
-            content = MANAGER_REQUEST_BODY(MARY)
+            content = MANAGER_REQUEST_BODY(mary)
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isCreated() }
             header { string("Location", "http://localhost/employees/1") }
             content {
                 contentType(MediaType.APPLICATION_JSON)
-                json(MANAGER_RESPONSE_BODY(MARY, 1))
+                json(MANAGER_RESPONSE_BODY(mary, 1))
             }
         }
 
         mvc.post("/employees") {
             contentType = MediaType.APPLICATION_JSON
-            content = MANAGER_REQUEST_BODY(MARY)
+            content = MANAGER_REQUEST_BODY(mary)
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isCreated() }
             header { string("Location", "http://localhost/employees/2") }
             content {
                 contentType(MediaType.APPLICATION_JSON)
-                json(MANAGER_RESPONSE_BODY(MARY, 2))
+                json(MANAGER_RESPONSE_BODY(mary, 2))
             }
         }
     }
@@ -97,12 +96,12 @@ class ControllerTests {
         every {
             employeeRepository.findById(1)
         } answers {
-            Optional.of(Employee(MARY,MANAGER,1))
+            Optional.of(Employee(mary, manager, 1))
         }
 
         every {
             employeeRepository.findById(2)
-        } answers  {
+        } answers {
             Optional.empty()
         }
 
@@ -110,7 +109,7 @@ class ControllerTests {
             status { isOk() }
             content {
                 contentType(MediaType.APPLICATION_JSON)
-                json(MANAGER_RESPONSE_BODY(MARY, 1))
+                json(MANAGER_RESPONSE_BODY(mary, 1))
             }
         }
 
@@ -118,7 +117,7 @@ class ControllerTests {
             status { isOk() }
             content {
                 contentType(MediaType.APPLICATION_JSON)
-                json(MANAGER_RESPONSE_BODY(MARY, 1))
+                json(MANAGER_RESPONSE_BODY(mary, 1))
             }
         }
 
@@ -150,7 +149,7 @@ class ControllerTests {
         } answers {
             Optional.empty()
         } andThenAnswer {
-            Optional.of(Employee(TOM,MANAGER,1))
+            Optional.of(Employee(tom, manager, 1))
         }
 
         val employee = slot<Employee>()
@@ -160,30 +159,29 @@ class ControllerTests {
             employee.captured
         }
 
-
         mvc.put("/employees/1") {
             contentType = MediaType.APPLICATION_JSON
-            content = MANAGER_REQUEST_BODY(TOM)
+            content = MANAGER_REQUEST_BODY(tom)
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isCreated() }
             header { string("Content-Location", "http://localhost/employees/1") }
             content {
                 contentType(MediaType.APPLICATION_JSON)
-                json(MANAGER_RESPONSE_BODY(TOM, 1))
+                json(MANAGER_RESPONSE_BODY(tom, 1))
             }
         }
 
         mvc.put("/employees/1") {
             contentType = MediaType.APPLICATION_JSON
-            content = MANAGER_REQUEST_BODY(TOM)
+            content = MANAGER_REQUEST_BODY(tom)
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
             header { string("Content-Location", "http://localhost/employees/1") }
             content {
                 contentType(MediaType.APPLICATION_JSON)
-                json(MANAGER_RESPONSE_BODY(TOM, 1))
+                json(MANAGER_RESPONSE_BODY(tom, 1))
             }
         }
 
@@ -193,7 +191,7 @@ class ControllerTests {
         }
 
         verify(exactly = 2) {
-            employeeRepository.save(Employee(TOM,MANAGER,1))
+            employeeRepository.save(Employee(tom, manager, 1))
         }
     }
 
@@ -204,7 +202,7 @@ class ControllerTests {
         every {
             employeeRepository.findById(1)
         } answers {
-            Optional.of(Employee(TOM,MANAGER,1))
+            Optional.of(Employee(tom, manager, 1))
         } andThenAnswer {
             Optional.empty()
         }
