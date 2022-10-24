@@ -1,7 +1,10 @@
 package es.unizar.webeng.lab3
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.*
+import io.mockk.every
+import io.mockk.justRun
+import io.mockk.verify
+import io.mockk.slot
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -137,7 +140,6 @@ class ControllerTests {
         verify(exactly = 2) {
             employeeRepository.findById(1)
         }
-
     }
 
     @Test
