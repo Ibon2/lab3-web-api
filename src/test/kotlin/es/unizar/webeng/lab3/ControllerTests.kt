@@ -87,9 +87,6 @@ class ControllerTests {
                 json(MANAGER_RESPONSE_BODY(MARY, 2))
             }
         }
-
-        // VERIFY
-
     }
 
     @Test
@@ -102,6 +99,7 @@ class ControllerTests {
         } answers {
             Optional.of(Employee(MARY,MANAGER,1))
         }
+
         every {
             employeeRepository.findById(2)
         } answers  {
@@ -132,9 +130,11 @@ class ControllerTests {
         verify(exactly = 0) {
             employeeRepository.save(any())
         }
+
         verify(exactly = 1) {
             employeeRepository.findById(2)
         }
+
         verify(exactly = 2) {
             employeeRepository.findById(1)
         }
@@ -191,6 +191,7 @@ class ControllerTests {
         verify(exactly = 2) {
             employeeRepository.findById(1)
         }
+
         verify(exactly = 2) {
             employeeRepository.save(Employee(TOM,MANAGER,1))
         }
@@ -223,6 +224,7 @@ class ControllerTests {
         verify(exactly = 2) {
             employeeRepository.findById(1)
         }
+
         verify(exactly = 1) {
             employeeRepository.deleteById(1)
         }
